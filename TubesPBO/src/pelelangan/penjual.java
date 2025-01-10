@@ -4,18 +4,41 @@
  */
 package pelelangan;
 
+import java.awt.Image;
+import java.io.File;
+import java.io.FileInputStream;
+import java.sql.*;
+import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
+import java.awt.Component;
+import javax.swing.JTable;
+import javax.swing.JLabel;
+import javax.swing.Timer;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.table.DefaultTableCellRenderer;
 /**
  *
  * @author ACER
  */
 public class penjual extends javax.swing.JFrame {
-
+    private DefaultTableModel tableModel;
+    private File fileGambar;
+    private Timer timer;
+    private int countdown = 60;
     /**
-     * Creates new form penjual
+     * Creates new form 
      */
     public penjual() {
         initComponents();
+        loadData();
     }
+
+//    penjual(tampilanAwal aThis) {
+//        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+//    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -33,35 +56,48 @@ public class penjual extends javax.swing.JFrame {
         InputNamaBarang = new javax.swing.JTextField();
         InputHarga = new javax.swing.JTextField();
         BtnBrowse = new javax.swing.JButton();
-        NamaFile = new javax.swing.JTextField();
+        InputFile = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
+        tbl_lelang = new javax.swing.JTable();
+        btn_mulai = new javax.swing.JButton();
+        btn_tambah = new javax.swing.JButton();
+        btn_hapus = new javax.swing.JButton();
         jLabel4 = new javax.swing.JLabel();
         ComboJenis = new javax.swing.JComboBox<>();
         jLabel5 = new javax.swing.JLabel();
-        jLabel6 = new javax.swing.JLabel();
+        time = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
         InputPelelang = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
+        btn_keluarr = new javax.swing.JButton();
         jLabel8 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
+        InputDesk = new javax.swing.JTextArea();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
+        jPanel1.setBackground(new java.awt.Color(0, 51, 51));
+
+        jLabel1.setBackground(new java.awt.Color(255, 255, 255));
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setText("Lelang Barang Anda");
 
+        jLabel2.setBackground(new java.awt.Color(255, 255, 255));
+        jLabel2.setForeground(new java.awt.Color(255, 255, 255));
         jLabel2.setText("Nama barang:");
 
+        jLabel3.setBackground(new java.awt.Color(255, 255, 255));
+        jLabel3.setForeground(new java.awt.Color(255, 255, 255));
         jLabel3.setText("Harga Awal ");
 
         BtnBrowse.setText("Browse");
+        BtnBrowse.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BtnBrowseActionPerformed(evt);
+            }
+        });
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tbl_lelang.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null, null, null, null},
                 {null, null, null, null, null, null, null, null},
@@ -69,46 +105,65 @@ public class penjual extends javax.swing.JFrame {
                 {null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "Nama_Barang", "Harga", "Gambar", "Jenis", "Pembeli", "Terjual", "Nama_Pelelang", "Deskripsi"
+                "nama_pelelang", "nama_barang", "harga_awal", "gambar", "jenis", "deskripsi", "nama_pembeli", "terjual"
             }
         ));
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane1.setViewportView(tbl_lelang);
 
-        jButton2.setText("Mulai Lelang");
-
-        jButton3.setText("Tambah");
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
+        btn_mulai.setText("Mulai Lelang");
+        btn_mulai.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
+                btn_mulaiActionPerformed(evt);
             }
         });
 
-        jButton4.setText("Hapus");
+        btn_tambah.setText("Tambah");
+        btn_tambah.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_tambahActionPerformed(evt);
+            }
+        });
 
+        btn_hapus.setText("Hapus");
+        btn_hapus.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_hapusActionPerformed(evt);
+            }
+        });
+
+        jLabel4.setBackground(new java.awt.Color(255, 255, 255));
+        jLabel4.setForeground(new java.awt.Color(255, 255, 255));
         jLabel4.setText("Jenis:");
 
         ComboJenis.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "", "Elektronik", "Non-Elektronik" }));
 
+        jLabel5.setBackground(new java.awt.Color(255, 255, 255));
         jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        jLabel5.setForeground(new java.awt.Color(255, 255, 255));
         jLabel5.setText("Timer");
 
-        jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel6.setText("00:00");
+        time.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        time.setForeground(new java.awt.Color(255, 255, 255));
+        time.setText("00:00");
 
+        jLabel7.setBackground(new java.awt.Color(255, 255, 255));
+        jLabel7.setForeground(new java.awt.Color(255, 255, 255));
         jLabel7.setText("Nama Pelelang");
 
-        jButton1.setText("Keluar");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        btn_keluarr.setText("Keluar");
+        btn_keluarr.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                btn_keluarrActionPerformed(evt);
             }
         });
 
+        jLabel8.setBackground(new java.awt.Color(255, 255, 255));
+        jLabel8.setForeground(new java.awt.Color(255, 255, 255));
         jLabel8.setText("Deskripsi");
 
-        jTextArea1.setColumns(20);
-        jTextArea1.setRows(5);
-        jScrollPane2.setViewportView(jTextArea1);
+        InputDesk.setColumns(20);
+        InputDesk.setRows(5);
+        jScrollPane2.setViewportView(InputDesk);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -127,23 +182,23 @@ public class penjual extends javax.swing.JFrame {
                                         .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE))
                                     .addGap(18, 18, 18)
                                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                        .addComponent(InputNamaBarang)
-                                        .addComponent(InputPelelang, javax.swing.GroupLayout.DEFAULT_SIZE, 227, Short.MAX_VALUE))))
+                                        .addComponent(InputNamaBarang, javax.swing.GroupLayout.DEFAULT_SIZE, 245, Short.MAX_VALUE)
+                                        .addComponent(InputPelelang))))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                                .addComponent(jButton1)
+                                .addComponent(btn_keluarr)
                                 .addGap(18, 18, 18)
-                                .addComponent(jButton4)
+                                .addComponent(btn_hapus)
                                 .addGap(18, 18, 18)
-                                .addComponent(jButton3)
+                                .addComponent(btn_tambah)
                                 .addGap(18, 18, 18)
-                                .addComponent(jButton2))
+                                .addComponent(btn_mulai))
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(jLabel1)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addContainerGap(26, Short.MAX_VALUE))
+                                .addComponent(time, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addContainerGap(33, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
@@ -155,18 +210,12 @@ public class penjual extends javax.swing.JFrame {
                                     .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                     .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                 .addGap(31, 31, 31)))
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(InputHarga)
-                                .addContainerGap(359, Short.MAX_VALUE))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(NamaFile)
-                                .addContainerGap(359, Short.MAX_VALUE))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(ComboJenis, 0, 227, Short.MAX_VALUE))
-                                .addGap(198, 198, 198))))))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(ComboJenis, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(InputFile, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(InputHarga, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 245, Short.MAX_VALUE))
+                        .addGap(187, 187, 187))))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -175,7 +224,7 @@ public class penjual extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(jLabel5)
-                    .addComponent(jLabel6))
+                    .addComponent(time))
                 .addGap(19, 19, 19)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel7)
@@ -191,7 +240,7 @@ public class penjual extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(BtnBrowse)
-                    .addComponent(NamaFile, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(InputFile, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
@@ -204,10 +253,10 @@ public class penjual extends javax.swing.JFrame {
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton2)
-                    .addComponent(jButton3)
-                    .addComponent(jButton4)
-                    .addComponent(jButton1))
+                    .addComponent(btn_mulai)
+                    .addComponent(btn_tambah)
+                    .addComponent(btn_hapus)
+                    .addComponent(btn_keluarr))
                 .addContainerGap(26, Short.MAX_VALUE))
         );
 
@@ -225,13 +274,97 @@ public class penjual extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton3ActionPerformed
+    private void btn_tambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_tambahActionPerformed
+        String namaPelelang = InputPelelang.getText();
+        String namaBarang = InputNamaBarang.getText();
+        String hargaAwal = InputHarga.getText();
+        String jenis = (String) ComboJenis.getSelectedItem();
+        String deskripsi = InputDesk.getText();
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton1ActionPerformed
+        try {
+            if (namaPelelang.isEmpty()) {
+            throw new ValidasiInputException("Inputkan nama pelelang");
+            }
+            if (namaBarang.isEmpty()) {
+                throw new ValidasiInputException("Inputkan nama barang");
+            }
+            if (hargaAwal.isEmpty()) {
+                throw new ValidasiInputException("inputkan harga awal");
+            }
+            if (jenis.isEmpty()) {
+                throw new ValidasiInputException("pilih jenis barang");
+            }
+            if (deskripsi.isEmpty()) {
+                throw new ValidasiInputException("inputkan deskripsi barang");
+            }
+               if (fileGambar == null) {
+            throw new ValidasiInputException("Pilih file gambar terlebih dahulu!");
+            }
+
+            try (Connection con = databaseConnection.getConnection();
+                 FileInputStream fis = new FileInputStream(fileGambar)) {
+
+                PreparedStatement stmt = con.prepareStatement(
+                    "INSERT INTO penjual (nama_pelelang, nama_barang, harga_awal, gambar, jenis, deskripsi) VALUES (?, ?, ?, ?, ?, ?)"
+                );
+                stmt.setString(1, namaPelelang);
+                stmt.setString(2, namaBarang);
+                stmt.setString(3, hargaAwal);
+                stmt.setBlob(4, fis, (int) fileGambar.length());
+                stmt.setString(5, jenis);
+                stmt.setString(6, deskripsi);
+                stmt.executeUpdate();
+                
+                InputPelelang.setText("");
+                InputNamaBarang.setText("");
+                InputHarga.setText("");
+                InputFile.setText("");
+                ComboJenis.setSelectedIndex(0);
+                InputDesk.setText("");
+                
+                loadData();
+                JOptionPane.showMessageDialog(this, "Data berhasil ditambahkan!");
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
+        }
+    }//GEN-LAST:event_btn_tambahActionPerformed
+
+    private void btn_keluarrActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_keluarrActionPerformed
+         tampilanAwal n3 = new tampilanAwal();
+         n3.setVisible(true);
+    }//GEN-LAST:event_btn_keluarrActionPerformed
+
+    private void btn_mulaiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_mulaiActionPerformed
+        startTimer();        
+    }//GEN-LAST:event_btn_mulaiActionPerformed
+
+    private void BtnBrowseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnBrowseActionPerformed
+        JFileChooser fileChooser = new JFileChooser();
+        int returnValue = fileChooser.showOpenDialog(null);
+        if (returnValue == JFileChooser.APPROVE_OPTION) {
+            fileGambar = fileChooser.getSelectedFile();
+            InputFile.setText(fileGambar.getAbsolutePath());
+        }
+    }//GEN-LAST:event_BtnBrowseActionPerformed
+
+    private void btn_hapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_hapusActionPerformed
+        int terpilih = tbl_lelang.getSelectedRow();
+        if (terpilih != -1) {
+            String nama_barang = tableModel.getValueAt(terpilih, 1).toString();
+            try (Connection con = databaseConnection.getConnection()) {
+                PreparedStatement stmt = con.prepareStatement("DELETE FROM penjual WHERE nama_barang = ?");
+                stmt.setString(1, nama_barang);
+                stmt.executeUpdate();
+                loadData();
+                JOptionPane.showMessageDialog(this, "Data berhasil dihapus!");
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Pilih data yang ingin dihapus terlebih dahulu.");
+        }
+    }//GEN-LAST:event_btn_hapusActionPerformed
 
     /**
      * @param args the command line arguments
@@ -271,26 +404,83 @@ public class penjual extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BtnBrowse;
     private javax.swing.JComboBox<String> ComboJenis;
+    private javax.swing.JTextArea InputDesk;
+    private javax.swing.JTextField InputFile;
     private javax.swing.JTextField InputHarga;
     private javax.swing.JTextField InputNamaBarang;
     private javax.swing.JTextField InputPelelang;
-    private javax.swing.JTextField NamaFile;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
+    private javax.swing.JButton btn_hapus;
+    private javax.swing.JButton btn_keluarr;
+    private javax.swing.JButton btn_mulai;
+    private javax.swing.JButton btn_tambah;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTable jTable1;
-    private javax.swing.JTextArea jTextArea1;
+    private javax.swing.JTable tbl_lelang;
+    private javax.swing.JLabel time;
     // End of variables declaration//GEN-END:variables
+
+    private void loadData() {
+        tableModel = (DefaultTableModel) tbl_lelang.getModel();
+        tableModel.setRowCount(0);
+
+        try (Connection con = databaseConnection.getConnection();
+             Statement stmt = con.createStatement();
+             ResultSet rs = stmt.executeQuery("SELECT * FROM penjual")) {
+
+            while (rs.next()) {
+                byte[] imgBytes = rs.getBytes("gambar");
+                ImageIcon imgIcon = null;
+                if (imgBytes != null) {
+                    Image img = new ImageIcon(imgBytes).getImage().getScaledInstance(200, 200, Image.SCALE_SMOOTH);
+                    imgIcon = new ImageIcon(img);
+                }
+                tableModel.addRow(new Object[] {
+                    rs.getString("nama_pelelang"),
+                    rs.getString("nama_barang"),
+                    rs.getString("harga_awal"),
+                    imgIcon,
+                    rs.getString("jenis"),
+                    rs.getString("deskripsi")
+                });
+                  tbl_lelang.getColumnModel().getColumn(3).setCellRenderer(new ImageRenderer());
+                  tbl_lelang.getColumnModel().getColumn(3).setPreferredWidth(200);
+                  tbl_lelang.setRowHeight(200);
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
+        }
+    }
+    private void startTimer() {
+        timer = new Timer(1000, e -> {
+        countdown--; 
+        time.setText(String.format("00:%02d", countdown)); 
+        
+        if (countdown == 0) { 
+            timer.stop(); 
+            JOptionPane.showMessageDialog(this, "Waktu lelang telah habis!");
+        }
+    });
+    timer.start(); 
+    }
+    class ImageRenderer extends DefaultTableCellRenderer {
+    @Override
+    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+        if (value instanceof ImageIcon) {
+            JLabel label = new JLabel();
+            label.setIcon((ImageIcon) value);
+            label.setHorizontalAlignment(JLabel.CENTER);
+            return label;
+        }
+        return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+    }
+}
+
 }

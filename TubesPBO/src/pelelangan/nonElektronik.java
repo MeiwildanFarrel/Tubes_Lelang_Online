@@ -4,20 +4,17 @@
  */
 package pelelangan;
 
+import java.io.File;
+
 /**
  *
  * @author ACER
  */
 public class nonElektronik extends barang{
 
-    public nonElektronik(int idBarang, String namaBarang, String jenis, String gambar, String deskripsiBarang, double hargaAwal) {
-        super(idBarang, namaBarang, jenis, gambar, deskripsiBarang, hargaAwal);
+    public nonElektronik(String pelelang, String namaBarang, String hargaAwal,String deskripsiBarang) throws ValidasiInputException {
+        super(pelelang, namaBarang, hargaAwal, "Elektronik",  deskripsiBarang);
     }
 
-    @Override
-    public double hitungNilaiJual() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-    
-    
+   
 }
